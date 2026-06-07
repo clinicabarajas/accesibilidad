@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Barajas Accesibilidad Auditiva</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="logo.png">
+    <meta name="theme-color" content="#512b7a">
+
     <style>
       body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; }
       .contenedor { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 850px; margin: auto; overflow-x: hidden; }
@@ -258,6 +263,13 @@
     </div>
 
     <script>
+      // REGISTRAR EL SERVICE WORKER PARA PERMITIR INSTALACION COMO APP
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+          .then(() => console.log('PWA Lista'))
+          .catch(err => console.log('Error PWA:', err));
+      }
+
       document.getElementById('miFormulario').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') e.preventDefault();
       });
@@ -274,6 +286,7 @@
         return `<span style="color:${cumple ? 'green' : 'red'}; font-weight:bold;">${val}</span>`;
       }
 
+      // Evalúa la columna global de la derecha
       function evRow(status) {
         if (status === "CUMPLE") return `<span style="color:green; font-weight:bold; font-size:14px;">✓</span>`;
         if (status === "CONDICIONAL") return `<span style="color:#d39e00; font-weight:bold; font-size:14px;">⚠</span>`;
@@ -295,18 +308,16 @@
         datos.Check_Senaletica = formElement.elements['Check_Senaletica'].checked;
         datos.Check_Info = formElement.elements['Check_Info'].checked;
 
-        // URL DE TU GOOGLE APPS SCRIPT
-        const urlAppsScript = "https://script.google.com/macros/s/AKfycbyTKpBad7M9vyyG4OnlQ6NmetMfrTGBzzCCOWnSpPlEn1mZreaCxxQOA9UmVTCN3hXy/exec";
+        // ⚠️ RECUERDA CAMBIAR ESTO POR TU URL DE GOOGLE APPS SCRIPT (/exec)
+        const urlAppsScript = "https://clinicabarajas.github.io/accesibilidad/";
 
-        // Lanzar la petición HTTP POST estándar desde GitHub hacia Google Sheets
         fetch(urlAppsScript, {
           method: 'POST',
-          mode: 'no-cors', // Evita bloqueos de seguridad de políticas del navegador del móvil
+          mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(datos)
         })
         .then(() => {
-          // El envío es asíncrono y opaco, procesamos la vista del PDF inmediatamente de forma local
           esperaElement.style.display = "none";
           
           document.getElementById('res_id').innerText = datos.ID_Teatro;
@@ -353,7 +364,7 @@
         .catch(error => {
           esperaElement.style.display = "none";
           formElement.style.display = "block";
-          alert("Error de red. Asegúrate de tener conexión.");
+          alert("Error de red o conexión.");
         });
       }
 
