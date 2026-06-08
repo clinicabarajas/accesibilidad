@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barajas Accesibilidad Auditiva</title>
+    
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./icons/icon-512.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png">
+    <meta name="theme-color" content="#512b7a">
+    <meta name="background-color" content="#f0f2f5">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Accesibilidad">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f0f2f5; padding: 10px; margin: 0; }
+      .contenedor { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); max-width: 850px; margin: auto; overflow-x: hidden; }
+      h1 { color: #512b7a; text-align: center; font-size: 24px; margin-bottom: 5px; margin-top: 10px; }
+      h2 { color: #555; text-align: center; font-size: 16px; margin-top: 0px; font-weight: normal; }
+      h3 { color: #fff; background: #512b7a; padding: 8px; border-radius: 4px; font-size: 14px; margin-top: 25px; text-transform: uppercase; }
+      label { display: block; margin-top: 8px; font-weight: bold; color: #444; font-size: 13px; }
+      input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 14px; }
+      
+      .scroll-x { overflow-x: auto; padding-bottom: 5px; }
+      .grid-7 { display: grid; grid-template-columns: repeat(7, minmax(60px, 1fr)); gap: 5px; text-align: center; margin-bottom: 5px;}
+      .grid-7 label { font-size: 12px; margin-bottom: 2px; color: #1a73e8; font-weight: bold; }
+      .grid-7 input { padding: 8px 4px; text-align: center; }
+      
+      .eval-fila { background-color: #e9ecef; padding: 8px; border-radius: 5px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; border-left: 4px solid #512b7a; }
+      .eval-fila label { margin: 0; font-size: 12px; color: #333; }
+      .eval-fila select { width: 150px; padding: 6px; margin: 0; font-size: 12px; font-weight: bold; }
+
+      .check-group { display: flex; align-items: center; margin-top: 10px; }
+      .check-group input { width: 20px; height: 20px; margin-right: 10px; margin-top: 0; }
+      .check-group label { margin-top: 0; font-weight: normal; font-size: 14px; }
+      
+      .btn-guardar { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 5px; font-size: 17px; font-weight: bold; margin-top: 25px; cursor: pointer; }
+      .btn-pdf { width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 5px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+      .btn-volver { width: 100%; padding: 12px; background: #ffc107; color: #333; border: none; border-radius: 5px; font-size: 15px; font-weight: bold; margin-top: 10px; cursor: pointer; }
+      .btn-nuevo { width: 100%; padding: 12px; background: #6c757d; color: white; border: none; border-radius: 5px; font-size: 14px; margin-top: 10px; cursor: pointer; }
+      
+      .tabla-pdf { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+      .tabla-pdf th, .tabla-pdf td { border: 1px solid #aaa; padding: 6px; text-align: center; }
+      .tabla-pdf th { background-color: #f2f2f2; color: #333; }
+      .tabla-pdf td.izq { text-align: left; font-weight: bold; background-color: #fafafa; }
+      .alerta-exito { padding: 12px; background-color: #d4edda; color: #155724; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold; border: 1px solid #c3e6cb;}
+
+      @media print {
+        body { background: white; padding: 0; margin: 0; }
+        .contenedor { box-shadow: none; padding: 0; max-width: 100%; }
+        .no-print { display: none !important; }
+        h1 { color: #512b7a !important; text-align: left; margin-bottom: 5px; -webkit-print-color-adjust: exact; font-size: 20px; }
+        h2 { color: #666; font-size: 14px; text-align: left; margin-top: 0; margin-bottom: 5px; }
+        h3 { background: #eee !important; color: #000 !important; border: 1px solid #000; padding: 5px; margin-top: 15px; font-size: 13px; -webkit-print-color-adjust: exact; }
+        .tabla-pdf th { background-color: #ddd !important; -webkit-print-color-adjust: exact; }
+        .tabla-pdf td { font-size: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="contenedor">
+      
+      <form id="miFormulario" onsubmit="enviarDatos(event)">
+        <h1>BARAJAS ACCESIBILIDAD AUDITIVA</h1>
+        <h2>CERTIFICADO DE CONFORMIDAD</h2>
+        
+        <h3>Datos de la Instalación</h3>
+        <label>ID / Nombre Instalación:</label> <input type="text" name="ID_Teatro">
+        <label>Sala:</label> <input type="text" name="Nombre_Teatro">
+        <label>Responsable Técnico:</label> <input type="text" name="Tecnico">
+        
+        <label>Driver bucle:</label> <input type="text" name="Driver_Bucle">
+        <label>Número de serie:</label> <input type="text" name="Numero_Serie">
+        <label>Área de cobertura:</label> <input type="text" name="Area_Cobertura">
+        <label>Altura de medición:</label> <input type="text" name="Altura_Medicion" value="1,45 m">
+        <label>Distribución de puntos A-G:</label> <input type="text" name="Distribucion_Puntos" value="Zona representativa de butacas">
+
+        <h3>Ruido de Fondo<br><span style="font-size:11px; text-transform:none; font-weight:normal;">(Límite: ≤ -47 dB A)</span></h3>
+        <div class="scroll-x">
+          <label>dB (A)</label>
+          <div class="grid-7">
+            <div><label>A</label><input type="number" step="any" name="Ruido_A_dBA"></div>
+            <div><label>B</label><input type="number" step="any" name="Ruido_B_dBA"></div>
+            <div><label>C</label><input type="number" step="any" name="Ruido_C_dBA"></div>
+            <div><label>D</label><input type="number" step="any" name="Ruido_D_dBA"></div>
+            <div><label>E</label><input type="number" step="any" name="Ruido_E_dBA"></div>
+            <div><label>F</label><input type="number" step="any" name="Ruido_F_dBA"></div>
+            <div><label>G</label><input type="number" step="any" name="Ruido_G_dBA"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación Ruido dB(A):</label>
+            <select name="Eval_Ruido"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+          <label>dB (Lineal) [Solo lectura]</label>
+          <div class="grid-7">
+            <div><input type="number" step="any" name="Ruido_A_dB"></div>
+            <div><input type="number" step="any" name="Ruido_B_dB"></div>
+            <div><input type="number" step="any" name="Ruido_C_dB"></div>
+            <div><input type="number" step="any" name="Ruido_D_dB"></div>
+            <div><input type="number" step="any" name="Ruido_E_dB"></div>
+            <div><input type="number" step="any" name="Ruido_F_dB"></div>
+            <div><input type="number" step="any" name="Ruido_G_dB"></div>
+          </div>
+        </div>
+
+        <h3>Intensidad de Campo Vertical (Cobertura)<br><span style="font-size:11px; text-transform:none; font-weight:normal;">(Límite: dentro de ±6 dB respecto a 400 mA/m)</span></h3>
+        <div class="scroll-x">
+          <div class="grid-7">
+            <div><label>A</label><input type="number" step="any" name="Cob_A"></div>
+            <div><label>B</label><input type="number" step="any" name="Cob_B"></div>
+            <div><label>C</label><input type="number" step="any" name="Cob_C"></div>
+            <div><label>D</label><input type="number" step="any" name="Cob_D"></div>
+            <div><label>E</label><input type="number" step="any" name="Cob_E"></div>
+            <div><label>F</label><input type="number" step="any" name="Cob_F"></div>
+            <div><label>G</label><input type="number" step="any" name="Cob_G"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación Cobertura:</label>
+            <select name="Eval_Cob"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+        </div>
+
+        <h3>Respuesta en Frecuencia<br><span style="font-size:11px; text-transform:none; font-weight:normal;">(Límite: ±3 dB respecto a 1 kHz)</span></h3>
+        <div class="scroll-x">
+          <label>100 Hz</label>
+          <div class="grid-7">
+            <div><label>A</label><input type="number" step="any" name="F100_A"></div>
+            <div><label>B</label><input type="number" step="any" name="F100_B"></div>
+            <div><label>C</label><input type="number" step="any" name="F100_C"></div>
+            <div><label>D</label><input type="number" step="any" name="F100_D"></div>
+            <div><label>E</label><input type="number" step="any" name="F100_E"></div>
+            <div><label>F</label><input type="number" step="any" name="F100_F"></div>
+            <div><label>G</label><input type="number" step="any" name="F100_G"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación 100 Hz:</label>
+            <select name="Eval_F100"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+          <label>1 kHz</label>
+          <div class="grid-7">
+            <div><input type="number" step="any" name="F1k_A" value="0"></div>
+            <div><input type="number" step="any" name="F1k_B" value="0"></div>
+            <div><input type="number" step="any" name="F1k_C" value="0"></div>
+            <div><input type="number" step="any" name="F1k_D" value="0"></div>
+            <div><input type="number" step="any" name="F1k_E" value="0"></div>
+            <div><input type="number" step="any" name="F1k_F" value="0"></div>
+            <div><input type="number" step="any" name="F1k_G" value="0"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación 1 kHz:</label>
+            <select name="Eval_F1k"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+          <label>5 kHz</label>
+          <div class="grid-7">
+            <div><input type="number" step="any" name="F5k_A"></div>
+            <div><input type="number" step="any" name="F5k_B"></div>
+            <div><input type="number" step="any" name="F5k_C"></div>
+            <div><input type="number" step="any" name="F5k_D"></div>
+            <div><input type="number" step="any" name="F5k_E"></div>
+            <div><input type="number" step="any" name="F5k_F"></div>
+            <div><input type="number" step="any" name="F5k_G"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación 5 kHz:</label>
+            <select name="Eval_F5k"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+        </div>
+
+        <h3>Ajuste de la Intensidad de Campo</h3>
+        <div class="scroll-x">
+          <label>1 kHz pulsante</label>
+          <div class="grid-7">
+            <div><label>A</label><input type="number" step="any" name="Pulsante_A"></div>
+            <div><label>B</label><input type="number" step="any" name="Pulsante_B"></div>
+            <div><label>C</label><input type="number" step="any" name="Pulsante_C"></div>
+            <div><label>D</label><input type="number" step="any" name="Pulsante_D"></div>
+            <div><label>E</label><input type="number" step="any" name="Pulsante_E"></div>
+            <div><label>F</label><input type="number" step="any" name="Pulsante_F"></div>
+            <div><label>G</label><input type="number" step="any" name="Pulsante_G"></div>
+          </div>
+          <label>ITU</label>
+          <div class="grid-7">
+            <div><input type="number" step="any" name="ITU_A"></div>
+            <div><input type="number" step="any" name="ITU_B"></div>
+            <div><input type="number" step="any" name="ITU_C"></div>
+            <div><input type="number" step="any" name="ITU_D"></div>
+            <div><input type="number" step="any" name="ITU_E"></div>
+            <div><input type="number" step="any" name="ITU_F"></div>
+            <div><input type="number" step="any" name="ITU_G"></div>
+          </div>
+          <div class="eval-fila">
+            <label>Evaluación Ajuste Intensidad:</label>
+            <select name="Eval_Intensidad"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+          </div>
+        </div>
+
+        <h3>Verificación Técnica Final</h3>
+        <label>Factor de Cresta (dB):</label> <input type="number" step="any" name="Cresta_dB" placeholder="Ej: +2">
+        <div class="check-group"><input type="checkbox" name="Check_Picos"><label>Recorte picos verificado</label></div>
+        <div class="check-group"><input type="checkbox" name="Check_Sonido"><label>Calidad del Sonido verificada</label></div>
+        <div class="check-group"><input type="checkbox" name="Check_Senaletica"><label>Señalética instalada</label></div>
+        <div class="check-group"><input type="checkbox" name="Check_Info"><label>Información al personal proporcionada</label></div>
+        <div class="eval-fila" style="margin-top: 15px;">
+            <label>Evaluación Técnica Final:</label>
+            <select name="Eval_Verif"><option value="CUMPLE">CUMPLE</option><option value="CONDICIONAL">CONDICIONAL</option><option value="NO CUMPLE">NO CUMPLE</option></select>
+        </div>
+
+        <h3>Conclusión Final del Documento</h3>
+        <label>Dictamen:</label>
+        <select name="Resultado_Final"><option value="Cumple">CUMPLE</option><option value="Condicional">CONDICIONAL</option><option value="No Cumple">NO CUMPLE</option></select>
+        <label>Observaciones:</label> <textarea name="Observaciones" rows="3"></textarea>
+        <button type="submit" id="btnGuardar" class="btn-guardar">Guardar y Generar PDF</button>
+      </form>
+      
+      <div id="espera" style="display:none; text-align:center; font-weight:bold; margin-top:20px; color:#512b7a;">Sincronizando y preparando informe...</div>
+
+      <div id="vistaResumen" style="display: none;">
+        <div class="alerta-exito no-print">✓ Datos registrados correctamente en la base de datos</div>
+        <h1 style="margin-bottom:0;">BARAJAS ACCESIBILIDAD AUDITIVA</h1>
+        <h2 style="font-weight:bold; margin-bottom: 20px;">CERTIFICADO DE CONFORMIDAD - SISTEMA BUCLE MAGNÉTICO</h2>
+        
+        <h3>Datos de la Instalación</h3>
+        <table class="tabla-pdf" style="text-align: left;">
+          <tr><th style="width:25%;">Instalación</th><td id="res_id"></td><th style="width:25%;">Sala</th><td id="res_sala"></td></tr>
+          <tr><th>Fecha</th><td id="res_fecha"></td><th>Técnico</th><td id="res_tecnico"></td></tr>
+          <tr><th>Driver Bucle</th><td id="res_driver"></td><th>Nº Serie</th><td id="res_serie"></td></tr>
+          <tr><th>Área Cobertura</th><td colspan="3" id="res_area"></td></tr>
+          <tr><th>Medición</th><td colspan="3" id="res_altura"></td></tr>
+        </table>
+
+        <h3>Resultados de Mediciones de Campo (Puntos A - G)</h3>
+        <table class="tabla-pdf">
+          <thead>
+            <tr><th style="width:24%;">Parámetro / Prueba</th><th style="width:8%;">A</th><th style="width:8%;">B</th><th style="width:8%;">C</th><th style="width:8%;">D</th><th style="width:8%;">E</th><th style="width:8%;">F</th><th style="width:8%;">G</th><th style="width:12%;">Eval.</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="izq">RUIDO DE FONDO<br><span style="font-weight:normal; font-size:10px;">(≤ -47 dB A)</span></td><td id="p_ruidodba_a"></td><td id="p_ruidodba_b"></td><td id="p_ruidodba_c"></td><td id="p_ruidodba_d"></td><td id="p_ruidodba_e"></td><td id="p_ruidodba_f"></td><td id="p_ruidodba_g"></td><td id="ev_ruido" style="background-color:#f8f9fa;"></td></tr>
+            <tr><td class="izq">Ruido Lineal dB</td><td id="p_ruidodb_a"></td><td id="p_ruidodb_b"></td><td id="p_ruidodb_c"></td><td id="p_ruidodb_d"></td><td id="p_ruidodb_e"></td><td id="p_ruidodb_f"></td><td id="p_ruidodb_g"></td><td style="background-color:#f8f9fa;">--</td></tr>
+            <tr><td class="izq">COBERTURA<br><span style="font-weight:normal; font-size:10px;">(±6 dB)</span></td><td id="p_cob_a"></td><td id="p_cob_b"></td><td id="p_cob_c"></td><td id="p_cob_d"></td><td id="p_cob_e"></td><td id="p_cob_f"></td><td id="p_cob_g"></td><td id="ev_cob" style="background-color:#f8f9fa;"></td></tr>
+            <tr><td class="izq">100 Hz (±3 dB)</td><td id="p_f100_a"></td><td id="p_f100_b"></td><td id="p_f100_c"></td><td id="p_f100_d"></td><td id="p_f100_e"></td><td id="p_f100_f"></td><td id="p_f100_g"></td><td id="ev_f100" style="background-color:#f8f9fa;"></td></tr>
+            <tr><td class="izq">1 kHz (Ref 0 dB)</td><td id="p_f1k_a"></td><td id="p_f1k_b"></td><td id="p_f1k_c"></td><td id="p_f1k_d"></td><td id="p_f1k_e"></td><td id="p_f1k_f"></td><td id="p_f1k_g"></td><td id="ev_f1k" style="background-color:#f8f9fa;"></td></tr>
+            <tr><td class="izq">5 kHz (±3 dB)</td><td id="p_f5k_a"></td><td id="p_f5k_b"></td><td id="p_f5k_c"></td><td id="p_f5k_d"></td><td id="p_f5k_e"></td><td id="p_f5k_f"></td><td id="p_f5k_g"></td><td id="ev_f5k" style="background-color:#f8f9fa;"></td></tr>
+            <tr><td class="izq">1 kHz Pulsante</td><td id="p_pul_a"></td><td id="p_pul_b"></td><td id="p_pul_c"></td><td id="p_pul_d"></td><td id="p_pul_e"></td><td id="p_pul_f"></td><td id="p_pul_g"></td><td id="ev_int" rowspan="2" style="background-color:#f8f9fa; vertical-align:middle;"></td></tr>
+            <tr><td class="izq">Señal ITU</td><td id="p_itu_a"></td><td id="p_itu_b"></td><td id="p_itu_c"></td><td id="p_itu_d"></td><td id="p_itu_e"></td><td id="p_itu_f"></td><td id="p_itu_g"></td></tr>
+          </tbody>
+        </table>
+
+        <h3>Verificación Técnica Final</h3>
+        <table class="tabla-pdf" style="text-align: left;">
+          <tr><th>Factor de Cresta</th><td id="res_cresta" style="font-weight:bold;"></td><th>Recorte de Picos</th><td id="res_ck_picos"></td></tr>
+          <tr><th>Calidad Sonido</th><td id="res_ck_sonido"></td><th>Señalética</th><td id="res_ck_sena"></td></tr>
+          <tr><th>Info al Personal</th><td id="res_ck_info"></td><th>Evaluación Fase</th><td id="ev_verif" style="text-align:center; background-color:#f8f9fa;"></td></tr>
+        </table>
+
+        <h3>Dictamen y Observaciones</h3>
+        <table class="tabla-pdf" style="text-align: left;">
+          <tr><th style="width:25%;">Resultado Final</th><td id="res_dictamen" style="font-weight:bold; font-size:15px;"></td></tr>
+          <tr><th>Observaciones</th><td id="res_obs"></td></tr>
+        </table>
+        
+        <button onclick="window.print()" class="btn-pdf no-print">📥 Generar y Guardar PDF</button>
+        <button onclick="volverAEditar()" class="btn-volver no-print">✎ Volver a editar datos</button>
+        <button onclick="reiniciarFormulario()" class="btn-nuevo no-print">🔄 Registrar otra sala</button>
+      </div>
+    </div>
+
+    <script>
+      // REGISTRAR EL SERVICE WORKER PARA PERMITIR INSTALACION COMO APP
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js')
+          .then(() => console.log('PWA Lista'))
+          .catch(err => console.log('Error PWA:', err));
+      }
+
+      document.getElementById('miFormulario').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+
+      function evCell(valorStr, tipo) {
+        if (!valorStr || valorStr.trim() === "") return "--";
+        let val = parseFloat(valorStr.replace(',', '.'));
+        if (isNaN(val)) return valorStr;
+        let cumple = true;
+        if (tipo === 'ruido_A') cumple = (val <= -47);
+        if (tipo === 'cob') cumple = (val >= -6 && val <= 6);
+        if (tipo === 'frec') cumple = (val >= -3 && val <= 3);
+        if (tipo === 'lineal') return val;
+        return `<span style="color:${cumple ? 'green' : 'red'}; font-weight:bold;">${val}</span>`;
+      }
+
+      // Evalúa la columna global de la derecha
+      function evRow(status) {
+        if (status === "CUMPLE") return `<span style="color:green; font-weight:bold; font-size:14px;">✓</span>`;
+        if (status === "CONDICIONAL") return `<span style="color:#d39e00; font-weight:bold; font-size:14px;">⚠</span>`;
+        if (status === "NO CUMPLE") return `<span style="color:red; font-weight:bold; font-size:14px;">✗</span>`;
+        return "--";
+      }
+
+      function enviarDatos(e) {
+        e.preventDefault(); 
+        var formElement = document.getElementById('miFormulario');
+        var esperaElement = document.getElementById('espera');
+        
+        formElement.style.display = "none";
+        esperaElement.style.display = "block";
+
+        var datos = Object.fromEntries(new FormData(formElement).entries());
+        datos.Check_Picos = formElement.elements['Check_Picos'].checked;
+        datos.Check_Sonido = formElement.elements['Check_Sonido'].checked;
+        datos.Check_Senaletica = formElement.elements['Check_Senaletica'].checked;
+        datos.Check_Info = formElement.elements['Check_Info'].checked;
+
+        // ⚠️ RECUERDA CAMBIAR ESTO POR TU URL DE GOOGLE APPS SCRIPT (/exec)
+        const urlAppsScript = "https://clinicabarajas.github.io/accesibilidad/";
+
+        fetch(urlAppsScript, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(datos)
+        })
+        .then(() => {
+          esperaElement.style.display = "none";
+          
+          document.getElementById('res_id').innerText = datos.ID_Teatro;
+          document.getElementById('res_sala').innerText = datos.Nombre_Teatro;
+          document.getElementById('res_fecha').innerText = datos.Fecha || new Date().toLocaleDateString();
+          document.getElementById('res_tecnico').innerText = datos.Tecnico;
+          document.getElementById('res_driver').innerText = datos.Driver_Bucle;
+          document.getElementById('res_serie').innerText = datos.Numero_Serie;
+          document.getElementById('res_area').innerText = datos.Area_Cobertura;
+          document.getElementById('res_altura').innerText = datos.Altura_Medicion + " | " + datos.Distribucion_Puntos;
+
+          let letras = ['A','B','C','D','E','F','G'];
+          letras.forEach(l => {
+            document.getElementById('p_ruidodba_'+l.toLowerCase()).innerHTML = evCell(datos['Ruido_'+l+'_dBA'], 'ruido_A');
+            document.getElementById('p_ruidodb_'+l.toLowerCase()).innerHTML  = evCell(datos['Ruido_'+l+'_dB'], 'lineal');
+            document.getElementById('p_cob_'+l.toLowerCase()).innerHTML      = evCell(datos['Cob_'+l], 'cob');
+            document.getElementById('p_f100_'+l.toLowerCase()).innerHTML     = evCell(datos['F100_'+l], 'frec');
+            document.getElementById('p_f1k_'+l.toLowerCase()).innerHTML      = evCell(datos['F1k_'+l], 'frec');
+            document.getElementById('p_f5k_'+l.toLowerCase()).innerHTML      = evCell(datos['F5k_'+l], 'frec');
+            document.getElementById('p_pul_'+l.toLowerCase()).innerHTML      = evCell(datos['Pulsante_'+l], 'lineal');
+            document.getElementById('p_itu_'+l.toLowerCase()).innerHTML      = evCell(datos['ITU_'+l], 'lineal');
+          });
+
+          document.getElementById('ev_ruido').innerHTML = evRow(datos.Eval_Ruido);
+          document.getElementById('ev_cob').innerHTML   = evRow(datos.Eval_Cob);
+          document.getElementById('ev_f100').innerHTML  = evRow(datos.Eval_F100);
+          document.getElementById('ev_f1k').innerHTML   = evRow(datos.Eval_F1k);
+          document.getElementById('ev_f5k').innerHTML   = evRow(datos.Eval_F5k);
+          document.getElementById('ev_int').innerHTML   = evRow(datos.Eval_Intensidad);
+          document.getElementById('ev_verif').innerHTML = evRow(datos.Eval_Verif);
+
+          document.getElementById('res_cresta').innerText = datos.Cresta_dB ? datos.Cresta_dB + " dB" : "";
+          document.getElementById('res_ck_picos').innerText = datos.Check_Picos ? "Sí ✓" : "No ✗";
+          document.getElementById('res_ck_sonido').innerText = datos.Check_Sonido ? "Sí ✓" : "No ✗";
+          document.getElementById('res_ck_sena').innerText = datos.Check_Senaletica ? "Sí ✓" : "No ✗";
+          document.getElementById('res_ck_info').innerText = datos.Check_Info ? "Sí ✓" : "No ✗";
+
+          document.getElementById('res_dictamen').innerText = datos.Resultado_Final.toUpperCase();
+          document.getElementById('res_obs').innerText = datos.Observaciones || "Ninguna.";
+
+          document.getElementById('vistaResumen').style.display = "block";
+          window.scrollTo(0, 0);
+        })
+        .catch(error => {
+          esperaElement.style.display = "none";
+          formElement.style.display = "block";
+          alert("Error de red o conexión.");
+        });
+      }
+
+      function volverAEditar() {
+        document.getElementById('vistaResumen').style.display = "none";
+        document.getElementById('miFormulario').style.display = "block";
+        window.scrollTo(0, 0);
+      }
+
+      function reiniciarFormulario() {
+        document.getElementById('vistaResumen').style.display = "none";
+        document.getElementById('miFormulario').reset();
+        document.getElementById('miFormulario').style.display = "block";
+        window.scrollTo(0, 0);
+      }
+    </script>
+  </body>
+</html>
